@@ -1,28 +1,34 @@
-# thanks-to
+# 📦 thanks-to
+
+[![NPM Version][npm-version-image]][npm-url]
+[![NPM Downloads][npm-downloads-image]][npm-downloads-url]
+
+[![Build Status][github-build-url]][github-url]
+[![codecov][codecov-image]][codecov-url]
 
 > Generate beautiful acknowledgments for your project's dependencies.  
-> Perfect for credits, open source disclosures, or "Thanks" sections.
+> Perfect for open source credits, docs, audit reports, or legal compliance.
 
 ---
 
 ## ✨ Features
 
-- ✅ Auto-detects `dependencies` and `devDependencies`
-- ✅ Distinguishes direct and transitive dependencies
-- ✅ Outputs to `./thanks-to/` folder by default
-- ✅ Supports JSON, Markdown, CSV, and HTML
-- ✅ Customizable CLI: choose formats, include dev or transitive deps
-- ✅ Designed for humans – readable, copy-pasteable, docs-ready
+- ✅ Auto-detect `dependencies` and `devDependencies`
+- ✅ Separate `direct` and `transitive` dependencies
+- ✅ Export to Markdown, JSON, CSV, and HTML
+- ✅ Filter by license name or package
+- ✅ Optional: Include full license content per package
+- ✅ Works via CLI or programmatic API
 
 ---
 
-## 🔧 Installation
+## 📦 Installation
 
 ```bash
 npm install --save-dev thanks-to
 ```
 
-Or use directly without install:
+Or run directly without install:
 
 ```bash
 npx thanks-to
@@ -30,44 +36,56 @@ npx thanks-to
 
 ---
 
-## 🚀 Usage
-
-### Basic (default)
+## 🚀 CLI Usage
 
 ```bash
-npx thanks-to
+npx thanks-to [options]
 ```
-
-- Exports direct runtime dependencies
-- Generates 3 files: `credits.json`, `credits.md`, `credits.html` in `./thanks-to`
-
----
 
 ### Options
 
-| Option                     | Description                                                   |
-| -------------------------- | ------------------------------------------------------------- |
-| `--transitive`             | Include transitive (indirect) dependencies                    |
-| `--report <types>`         | Export formats: `json,md,csv,html` (comma-separated)          |
-| `--output <dir>`           | Custom output folder (default: `./thanks-to`)                 |
-| `--silent`                 | Suppress logs                                                 |
-| `--only <group>`           | `deps`, `devDeps`, or `all` – choose which group to include   |
-| `--only-license <list>`    | Only include licenses in list (e.g. `mit,apache`)             |
-| `--exclude-license <list>` | Exclude licenses (e.g. `gpl,agpl`)                            |
-| `--include-package <list>` | Only include package names in list (e.g. `express,vue`)       |
-| `--exclude-package <list>` | Exclude package names (e.g. `left-pad,lodash`)                |
-| `--with-license-text`      |                                                               |
+| Option                     | Description                                                   | Default          |
+| -------------------------- | ------------------------------------------------------------- |----------------- |
+| `--help`                   | Show usage instructions and available options                 | -                |
+| `--transitive`             | Include transitive (indirect) dependencies                    | false            |
+| `--report <types>`         | Export formats: `json,md,csv,html` (comma-separated)          | json,md,csv,html |
+| `--output <dir>`           | Custom output folder                                          | `./thanks-to`    |  
+| `--silent`                 | Suppress logs                                                 | false            |
+| `--only <group>`           | `deps`, `devDeps`, or `all` – choose which group to include   | deps             |
+| `--only-license <list>`    | Only include licenses in list (e.g. `mit,apache`)             | -                |
+| `--exclude-license <list>` | Exclude licenses (e.g. `gpl,agpl`)                            | -                |
+| `--include-package <list>` | Only include package names in list (e.g. `express,vue`)       | -                |
+| `--exclude-package <list>` | Exclude package names (e.g. `left-pad,lodash`)                | -                |
+| `--with-license-text`      | Include full license text from packages if available          | false            |
 
 ---
 
 ### Examples
 
 ```bash
-# Only export markdown
+# Export default deps into all formats
+npx thanks-to
+
+# Export only markdown
 npx thanks-to --report md
 
-# Include dev + transitive deps, only HTML
-npx thanks-to --dev --transitive --report html
+# Include devDependencies and transitive packages
+npx thanks-to --only all --transitive
+
+# Only include MIT or Apache licensed packages
+npx thanks-to --only-license mit,apache
+
+# Exclude GPL or AGPL licensed packages
+npx thanks-to --exclude-license gpl,agpl
+
+# Only include express and chalk
+npx thanks-to --include-package express,chalk
+
+# Export only devDependencies to JSON
+npx thanks-to --only devDeps --report json
+
+# Include license text and export as HTML
+npx thanks-to --with-license-text --report html
 
 # Export into docs folder
 npx thanks-to --output ./docs/credits
@@ -75,98 +93,106 @@ npx thanks-to --output ./docs/credits
 
 ---
 
-## 🧩 Programmatic Usage (API)
+## 🧩 API Usage
 
-You can also use `thanks-to` as a Node.js/TypeScript library:
+You can use `thanks-to` in both ESM and CommonJS environments.
 
-### Example
+### ✅ ESM
 
 ```ts
 import { generateThanksData, exportReports } from 'thanks-to';
 
-async function main() {
-  const data = await generateThanksData({
-    dev: true,
-    transitive: false,
-  });
-
-  await exportReports(data, ['json', 'md'], './credits');
-}
+const data = await generateThanksData({ transitive: true });
+await exportReports(data, ['md'], './output');
 ```
 
-### Types
+### ✅ CommonJS
 
-```ts
-export interface GenerateOptions {
-  dev?: boolean;
-  transitive?: boolean;
-}
+```js
+const { generateThanksData, exportReports } = require('thanks-to');
 
-export function generateThanksData(options: GenerateOptions): Promise<GroupedDeps>;
-
-export function exportReports(
-  data: GroupedDeps,
-  formats: ('json' | 'md' | 'html')[],
-  outputDir: string
-): Promise<void>;
+(async () => {
+  const data = await generateThanksData({ transitive: true });
+  await exportReports(data, ['md'], './output');
+})();
 ```
+
+If you're using TypeScript, the library automatically infers types from exported definitions.
 
 ---
 
-## 📁 Output
+### API Options
 
-### Markdown (`credits.md`)
+```ts
+Options {
+  report: string['html' | 'csv' | 'json' | 'md'];
+  transitive: boolean;
+  withLicenseText: boolean;
+  only: 'all' | 'deps' | 'devDeps';
+  onlyLicense?: string[] | null;
+  excludeLicense?: string[] | null;
+  includePackage?: string[] | null;
+  excludePackage?: string[] | null;
+  output: string;
+}
+```
+
+You can pass these options into `generateThanksData()` or into a wrapper function if building a programmatic tool. The `report` option is typically used with `exportReports()` to control the file formats written.
+
+---
+
+## 📁 Output Formats
+
+### ✅ Markdown (`credits.md`)
 
 ```md
 # 📦 Thanks to Open Source
 
 ## Dependencies (Direct)
-- [chalk](https://github.com/chalk/chalk) – MIT
+- [express](https://github.com/expressjs/express) – MIT
 
-## Dev Dependencies (Direct)
+## DevDependencies (Direct)
 - [eslint](https://github.com/eslint/eslint) – MIT
 ```
 
----
+### ✅ CSV (`credits.csv`)
 
-### HTML (`credits.html`)
+```csv
+name,version,license,repository.url,via,type
+chalk,5.3.0,MIT,https://github.com/chalk/chalk,,dependencies
+eslint,8.56.0,MIT,https://github.com/eslint/eslint,,devDependencies
+```
 
-A clean, dark-mode-friendly HTML page you can embed in documentation or publish on GitHub Pages.
+### ✅ JSON (`credits.json`)
 
-> Supports sectioning, clickable repo links, license info, and more.
-
----
-
-### JSON (`credits.json`)
-
-Machine-readable output with structure:
+Structured data grouped by type (`direct`, `transitive`):
 
 ```json
 {
   "dependencies": {
     "direct": [
       {
-        "name": "chalk",
-        "version": "5.3.0",
+        "name": "express",
+        "version": "4.18.2",
         "license": "MIT",
         "repository": {
 		   "url": "https://www.npmjs.com/package/chalk",
 		   "git": "https://github.com/chalk/chalk"
 		}
+        "licenseContent": "..." // if --with-license-text used
       }
-    ],
-    "transitive": [...]
-  },
-  "devDependencies": {
-    "direct": [...],
-    "transitive": [...]
+    ]
   }
 }
 ```
 
+### ✅ HTML (`credits.html`)
+
+Clean, dark-mode friendly HTML with links, license names and full license content (optional).
+
 ---
 
-## 🧠 Why use this?
+## 🧠 Use case
 
 - ❤️ Add credit to the open-source community
 - 📑 Show dependencies in published research or products
@@ -180,3 +206,13 @@ Machine-readable output with structure:
 MIT © [Yuki](https://github.com/yukiakai212/)
 
 ---
+
+
+[npm-downloads-image]: https://badgen.net/npm/dm/thanks-to
+[npm-downloads-url]: https://www.npmjs.com/package/thanks-to
+[npm-url]: https://www.npmjs.com/package/thanks-to
+[npm-version-image]: https://badgen.net/npm/v/thanks-to
+[github-build-url]: https://github.com/yukiakai212/thanks-to/actions/workflows/build.yml/badge.svg
+[github-url]: https://github.com/yukiakai212/thanks-to/
+[codecov-image]: https://codecov.io/gh/yukiakai212/thanks-to/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/yukiakai212/thanks-to

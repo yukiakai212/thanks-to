@@ -21,15 +21,13 @@ export type GroupedDeps = {
   devDependencies: DependencyGroup;
 };
 export interface Options {
-  report?: ('json' | 'md' | 'html' | 'csv')[];
-  transitive?: boolean;
-  withLicenseText?: boolean;
-  only?: 'all' | 'deps' | 'devDeps';
+  report: ('json' | 'md' | 'html' | 'csv')[];
+  transitive: boolean;
+  withLicenseText: boolean;
+  only: 'all' | 'deps' | 'devDeps';
   onlyLicense?: string[] | null;
   excludeLicense?: string[] | null;
   includePackage?: string[] | null;
   excludePackage?: string[] | null;
-  output?: string;
+  output: string;
 }
-
-declare function generateThanksData(options: Options): Promise<GroupedDeps>;

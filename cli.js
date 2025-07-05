@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import path from 'path';
 import fs from 'fs';
-import { generateThanksData } from './dist/index.js';
+import { generateThanksData, exportReports } from './dist/index.js';
 
 const program = new Command();
 
@@ -43,6 +43,8 @@ const formats = options.report.split(',').map((f) => f.trim().toLowerCase());
   }
 
   const data = await generateThanksData(options);
-
-  console.log(`✅ Exported reports to ${options.output}`);
+  await exportReports(data, formats, options.output);
+  if (!options.silent) {
+    console.log(`✅ Exported reports to ${options.output}`);
+  }
 })();

@@ -2,11 +2,19 @@
 import { json2csv } from 'json-2-csv';
 import fs from 'fs';
 import path from 'path';
-import { GroupedDeps, Options } from './types';
+import { GroupedDeps } from './types.js';
 
 export async function exportToCSV(data) {
   const options = {
-    keys: ['name', 'version', 'license', 'author', 'repository.url', 'via', 'type'],
+    keys: [
+      'name',
+      'version',
+      'license',
+      'author',
+      { field: 'repository.url', title: 'Repository' },
+      'via',
+      'type',
+    ],
     unwindArrays: true,
     emptyFieldValue: '',
   };
@@ -24,22 +32,26 @@ export async function exportToCSV(data) {
     options,
   );
 }
-export async function reportToFile(data: GroupedDeps, options: Options) {
-  if (!fs.existsSync(options.output)) fs.mkdirSync(options.output, { recursive: true });
-  const reportFolder = path.join(options.output, 'credits');
-  if (options.report.includes('csv')) {
+export async function exportReports(
+  data: GroupedDeps,
+  formats: ('json' | 'md' | 'html' | 'csv')[],
+  outputDir: string,
+) {
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+  const reportFolder = path.join(outputDir, 'credits');
+  if (formats.includes('csv')) {
     const outputData = await exportToCSV(data);
     fs.writeFileSync(reportFolder + '.csv', outputData);
   }
-  if (options.report.includes('html')) {
+  if (formats.includes('html')) {
     const outputData = generateHtml(data);
     fs.writeFileSync(reportFolder + '.html', outputData);
   }
-  if (options.report.includes('md')) {
+  if (formats.includes('md')) {
     const outputData = generateMarkdown(data);
     fs.writeFileSync(reportFolder + '.md', outputData);
   }
-  if (options.report.includes('json')) {
+  if (formats.includes('json')) {
     const outputData = JSON.stringify(data);
     fs.writeFileSync(reportFolder + '.json', outputData);
   }
@@ -47,13 +59,13 @@ export async function reportToFile(data: GroupedDeps, options: Options) {
 function generateMarkdown(data: GroupedDeps): string {
   let md = `# Thanks to Open Source\n\n`;
 
-  const section = (title: string, deps: typeof data.dependencies.direct) => {
+  const section = (title: string, deps: typeof data.dependencies.direct, note: string) => {
     if (!deps.length) return '';
     return (
-      `## ${title}\n` +
+      `## ${title}\n${note}` +
       deps
         .map((dep) => {
-          const url = (dep.repository.git || dep.repository.url) ?? '';
+          const url = (dep.repository?.git || dep.repository?.url) ?? '';
           return `- [${dep.name}](${url}) – ${dep.license || 'Unknown'}${dep.via ? ` (via: ${dep.via.join(', ')})` : ''}`;
         })
         .join('\n') +
@@ -61,27 +73,33 @@ function generateMarkdown(data: GroupedDeps): string {
     );
   };
 
-  md += section('Dependencies (Direct)', data.dependencies.direct);
-  md += section('Dependencies (Transitive)', data.dependencies.transitive);
-  md += section('DevDependencies (Direct)', data.devDependencies.direct);
-  md += section('DevDependencies (Transitive)', data.devDependencies.transitive);
-
+  md += section(
+    'Dependencies',
+    [...data.dependencies.direct, ...data.dependencies.transitive],
+    '> These are packages required for the application to run in production.\n',
+  );
+  md += section(
+    'Development-only dependencies',
+    [...data.devDependencies.direct, ...data.devDependencies.transitive],
+    '> These packages are only needed during development (e.g., testing, building, linting).\n',
+  );
   return md;
 }
 
 export function generateHtml(data: GroupedDeps): string {
-  const section = (title: string, deps: GroupedDeps['dependencies']['direct']) => {
+  const section = (title: string, deps: GroupedDeps['dependencies']['direct'], note: string) => {
     if (!deps.length) return '';
     return `
     <section>
       <h2>${title}</h2>
+	  <p class="license">${note}</p>
       <ul>
         ${deps
           .map(
             (d) => `
           <li>
-            <a href="${d.repository.git || d.repository.url || ''}" target="_blank" rel="noopener">
-              ${d.name}@${d.version}
+            <a href="${d.repository?.git || d.repository?.url || ''}" target="_blank" rel="noopener">
+              ${d.name}
             </a>
             <span class="license">– ${d.license || 'Unknown'}</span>
             ${d.via?.length ? `<span class="via">(via: ${d.via.join(', ')})</span>` : ''}
@@ -166,10 +184,8 @@ export function generateHtml(data: GroupedDeps): string {
 <body>
   <h1>📦 Thanks to Open Source</h1>
 
-  ${section('Runtime Dependencies (Direct)', data.dependencies.direct)}
-  ${section('Runtime Dependencies (Transitive)', data.dependencies.transitive)}
-  ${section('Dev Dependencies (Direct)', data.devDependencies.direct)}
-  ${section('Dev Dependencies (Transitive)', data.devDependencies.transitive)}
+  ${section('Dependencies', [...data.dependencies.direct, ...data.dependencies.transitive], 'These are packages required for the application to run in production.')}
+  ${section('Development-only dependencies', [...data.devDependencies.direct, ...data.devDependencies.transitive], 'These packages are only needed during development (e.g., testing, building, linting).')}
 
   <footer>Generated with <a href="https://www.npmjs.com/package/thanks-to" target="_blank">thanks-to</a></footer>
 </body>

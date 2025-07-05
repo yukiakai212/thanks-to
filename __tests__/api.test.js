@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exportToCSV } from '../src/export';
+import { exportToCSV } from '../src/exporter';
 
 describe('exportToCSV', () => {
   const mockData = {
@@ -39,7 +39,7 @@ describe('exportToCSV', () => {
 
   it('should generate valid CSV content with expected headers', async () => {
     const csv = await exportToCSV(mockData);
-    expect(csv).toContain('name,version,license,author,repository.url,via,type');
+    expect(csv).toContain('name,version,license,author,Repository,via,type');
     expect(csv).toContain(
       'chalk,5.3.0,MIT,Sindre Sorhus,https://www.npmjs.com/package/chalk,,dependencies',
     );

@@ -6,10 +6,11 @@ import correct from 'spdx-correct';
 import resolvePkg from 'resolve-pkg';
 import { globSync } from 'glob';
 
-import { GroupedDeps, PackageInfo } from './types';
+import { GroupedDeps, PackageInfo } from './types.js';
+import { Filter } from './filter.js';
 
 export const PACKAGE_FILE_NAME = 'package.json';
-export const CACHE_PKG = new Map<string, Object>();
+export const CACHE_PKG = new Map<string, object>();
 export function readLicenseFile(packageRoot: string): string | undefined {
   const patterns = ['LICENSE*', 'LICENCE*', 'COPYING*'];
 
@@ -21,7 +22,7 @@ export function readLicenseFile(packageRoot: string): string | undefined {
     try {
       const content = fs.readFileSync(file, 'utf8');
       return content;
-    } catch (e) {
+    } catch {
       continue;
     }
   }
@@ -31,9 +32,11 @@ export function readLicenseFile(packageRoot: string): string | undefined {
 
 export function resolveSourceList(list, options): PackageInfo[] {
   const pkgs = [];
-  for (let pkg of list) {
+  const filter = new Filter(options);
+  for (const pkg of list) {
     const pkgResource = resolveSource(pkg, options);
-    if (pkgResource) pkgs.push(pkgResource);
+    if (pkgResource && !filter.isFilteredPackage(pkg) && !filter.isFilteredLicense(pkgResource))
+      pkgs.push(pkgResource);
   }
   return pkgs;
 }

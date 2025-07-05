@@ -1,23 +1,35 @@
 import correct from 'spdx-correct';
-import { GroupedDeps, PackageInfo, Options } from './types.js';
-import { getDirectDeps, getNpmTreeRaw, resolveSourceList, resolveSource } from './extractor.js';
-import { Tree, walkTree } from './tree.js';
-import { reportToFile } from './export.js';
+import { GroupedDeps, Options } from './types.js';
+import { getDirectDeps, getNpmTreeRaw, resolveSourceList } from './extractor.js';
+import { walkTree } from './tree.js';
+import { exportReports } from './exporter.js';
 
+export { exportReports };
 function correctOptions(options): Options {
   const formatedOption: Options = {
-    report: options?.report ? options.report.split(',') : ['html', 'json', 'md', 'csv'],
+    report:
+      typeof options.report === 'string'
+        ? options.report.split(',')
+        : options.report || ['html', 'json', 'md', 'csv'],
     transitive: options?.transitive || false,
     withLicenseText: options?.withLicenseText || false,
     only: options?.only || 'deps',
-    onlyLicense: options?.onlyLicense
-      ? options.onlyLicense.split(',').map((x) => correct(x) || 'Unknow')
-      : null,
-    excludeLicense: options?.excludeLicense
-      ? options.excludeLicense.split(',').map((x) => correct(x) || 'Unknow')
-      : null,
-    includePackage: options?.includePackage ? options.includePackage.split(',') : null,
-    excludePackage: options?.excludePackage ? options.excludePackage.split(',') : null,
+    onlyLicense:
+      typeof options.onlyLicense === 'string'
+        ? options.onlyLicense.split(',').map((x) => correct(x) || 'Unknow')
+        : options.onlyLicense,
+    excludeLicense:
+      typeof options.excludeLicense === 'string'
+        ? options.excludeLicense.split(',').map((x) => correct(x) || 'Unknow')
+        : options.excludeLicense,
+    includePackage:
+      typeof options.includePackage === 'string'
+        ? options.includePackage.split(',')
+        : options.includePackage,
+    excludePackage:
+      typeof options.excludePackage === 'string'
+        ? options.excludePackage.split(',')
+        : options.excludePackage,
     output: options?.output || './thanks-to',
   };
   return formatedOption;
@@ -53,10 +65,12 @@ export function classifyDependencies(options?: Options): GroupedDeps {
 
   return groups;
 }
-
-export async function generateThanksData(options: Options): Promise<GroupedDeps> {
+export async function thanksTo(options): Promise<void> {
+  const thanksData = await generateThanksData(options);
+  await exportReports(thanksData, options.report, options.output);
+}
+export async function generateThanksData(options): Promise<GroupedDeps> {
   const optsCorrected = correctOptions(options);
   const result = classifyDependencies(optsCorrected);
-  await reportToFile(result, optsCorrected);
   return result;
 }
