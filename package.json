@@ -4,6 +4,7 @@
   "description": "Generate beautiful acknowledgments for your project's dependencies",
   "type": "module",
   "main": "./dist/index.js",
+  "bin": "./cli.js",
   "exports": {
     "import": "./dist/index.js",
     "require": "./dist/index.cjs"
@@ -12,7 +13,7 @@
     "test": "npm run build && npx vitest run --reporter verbose --coverage",
     "format": "prettier --write **/*.{js,ts}",
     "format:check": "prettier --check **/*.{js,ts}",
-    "lint": "eslint src/**/*.js",
+    "lint": "eslint src/**/*.ts",
     "build": "npx tsup"
   },
   "files": [
@@ -44,14 +45,19 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
     "@vitest/coverage-v8": "^3.2.4",
     "dotenv": "^17.0.1",
     "eslint": "^9.30.0",
+    "eslint-config-prettier": "^10.1.5",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.1",
     "vitest": "^3.2.4"
   },
   "dependencies": {

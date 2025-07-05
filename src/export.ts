@@ -6,52 +6,59 @@ import { GroupedDeps, Options } from './types';
 
 export async function exportToCSV(data) {
   const options = {
-	  keys: ['name', 'version', 'license', 'author', 'repository.url', 'via', 'type'],
-	  unwindArrays: true,
-	  emptyFieldValue: '',
+    keys: ['name', 'version', 'license', 'author', 'repository.url', 'via', 'type'],
+    unwindArrays: true,
+    emptyFieldValue: '',
   };
-  data.dependencies.direct.map(x => x.type = 'dependencies')
-  data.dependencies.transitive.map(x => x.type = 'dependencies')
-  data.devDependencies.direct.map(x => x.type = 'devDependencies')
-  data.devDependencies.transitive.map(x => x.type = 'devDependencies')
-  return await json2csv([...data.dependencies.direct, ...data.dependencies.transitive, ...data.devDependencies.direct, ...data.devDependencies.transitive], options);
+  data.dependencies.direct.map((x) => (x.type = 'dependencies'));
+  data.dependencies.transitive.map((x) => (x.type = 'dependencies'));
+  data.devDependencies.direct.map((x) => (x.type = 'devDependencies'));
+  data.devDependencies.transitive.map((x) => (x.type = 'devDependencies'));
+  return await json2csv(
+    [
+      ...data.dependencies.direct,
+      ...data.dependencies.transitive,
+      ...data.devDependencies.direct,
+      ...data.devDependencies.transitive,
+    ],
+    options,
+  );
 }
-export async function reportToFile(data: GroupedDeps, options: Options)
-{
-	if(!fs.existsSync(options.output))
-		fs.mkdirSync(options.output, {recursive :true});
-	const reportFolder = path.join(options.output, 'credits');
-	if(options.report.includes('csv'))
-	{
-		const outputData = await exportToCSV(data);
-		fs.writeFileSync(reportFolder +'.csv', outputData);
-	}
-	if(options.report.includes('html'))
-	{
-		const outputData = generateHtml(data);
-		fs.writeFileSync(reportFolder +'.html', outputData);
-	}
-	if(options.report.includes('md'))
-	{
-		const outputData = generateMarkdown(data);
-		fs.writeFileSync(reportFolder + '.md', outputData);
-	}
-	if(options.report.includes('json'))
-	{
-		const outputData = JSON.stringify(data);
-		fs.writeFileSync(reportFolder + '.json', outputData);
-	}
-	
+export async function reportToFile(data: GroupedDeps, options: Options) {
+  if (!fs.existsSync(options.output)) fs.mkdirSync(options.output, { recursive: true });
+  const reportFolder = path.join(options.output, 'credits');
+  if (options.report.includes('csv')) {
+    const outputData = await exportToCSV(data);
+    fs.writeFileSync(reportFolder + '.csv', outputData);
+  }
+  if (options.report.includes('html')) {
+    const outputData = generateHtml(data);
+    fs.writeFileSync(reportFolder + '.html', outputData);
+  }
+  if (options.report.includes('md')) {
+    const outputData = generateMarkdown(data);
+    fs.writeFileSync(reportFolder + '.md', outputData);
+  }
+  if (options.report.includes('json')) {
+    const outputData = JSON.stringify(data);
+    fs.writeFileSync(reportFolder + '.json', outputData);
+  }
 }
 function generateMarkdown(data: GroupedDeps): string {
   let md = `# Thanks to Open Source\n\n`;
 
   const section = (title: string, deps: typeof data.dependencies.direct) => {
     if (!deps.length) return '';
-    return `## ${title}\n` + deps.map(dep => {
-      const url = (dep.repository.git || dep.repository.url) ?? '';
-      return `- [${dep.name}](${url}) – ${dep.license || 'Unknown'}${dep.via ? ` (via: ${dep.via.join(', ')})` : ''}`;
-    }).join('\n') + '\n\n';
+    return (
+      `## ${title}\n` +
+      deps
+        .map((dep) => {
+          const url = (dep.repository.git || dep.repository.url) ?? '';
+          return `- [${dep.name}](${url}) – ${dep.license || 'Unknown'}${dep.via ? ` (via: ${dep.via.join(', ')})` : ''}`;
+        })
+        .join('\n') +
+      '\n\n'
+    );
   };
 
   md += section('Dependencies (Direct)', data.dependencies.direct);
@@ -63,16 +70,15 @@ function generateMarkdown(data: GroupedDeps): string {
 }
 
 export function generateHtml(data: GroupedDeps): string {
-  const section = (
-    title: string,
-    deps: GroupedDeps['dependencies']['direct']
-  ) => {
+  const section = (title: string, deps: GroupedDeps['dependencies']['direct']) => {
     if (!deps.length) return '';
     return `
     <section>
       <h2>${title}</h2>
       <ul>
-        ${deps.map(d => `
+        ${deps
+          .map(
+            (d) => `
           <li>
             <a href="${d.repository.git || d.repository.url || ''}" target="_blank" rel="noopener">
               ${d.name}@${d.version}
@@ -80,10 +86,13 @@ export function generateHtml(data: GroupedDeps): string {
             <span class="license">– ${d.license || 'Unknown'}</span>
             ${d.via?.length ? `<span class="via">(via: ${d.via.join(', ')})</span>` : ''}
           </li>
-        `).join('')}
+        `,
+          )
+          .join('')}
       </ul>
     </section>
-  `};
+  `;
+  };
 
   return `
 <!DOCTYPE html>

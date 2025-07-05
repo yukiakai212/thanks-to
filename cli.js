@@ -11,7 +11,11 @@ program
   .description('Generate credits for open-source dependencies')
   .option('--only <group>', '[deps|devDeps|all] – choose which group to include', 'deps')
   .option('--transitive', 'Include transitive (indirect) dependencies')
-  .option('--report <formats>', 'Output formats (comma-separated: json,md,csv,html)', 'csv,json,md,html')
+  .option(
+    '--report <formats>',
+    'Output formats (comma-separated: json,md,csv,html)',
+    'csv,json,md,html',
+  )
   .option('--output <dir>', 'Output directory', './thanks-to')
   .option('--only-license <list>', 'Only include licenses in list (e.g. mit,apache)')
   .option('--exclude-license <list>', 'Exclude licenses (e.g. gpl,agpl)')
@@ -25,7 +29,7 @@ program.parse(process.argv);
 const options = program.opts();
 
 // Parse report formats
-const formats = options.report.split(',').map(f => f.trim().toLowerCase());
+const formats = options.report.split(',').map((f) => f.trim().toLowerCase());
 
 // Run core logic
 (async () => {
@@ -40,9 +44,5 @@ const formats = options.report.split(',').map(f => f.trim().toLowerCase());
 
   const data = await generateThanksData(options);
 
-
-
-  
-    console.log(`✅ Exported reports to ${options.output}`);
-  
+  console.log(`✅ Exported reports to ${options.output}`);
 })();

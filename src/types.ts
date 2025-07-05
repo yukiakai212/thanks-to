@@ -24,7 +24,7 @@ export interface Options {
   report?: ('json' | 'md' | 'html' | 'csv')[];
   transitive?: boolean;
   withLicenseText?: boolean;
-  only?: ('all' | 'deps' | 'devDeps');
+  only?: 'all' | 'deps' | 'devDeps';
   onlyLicense?: string[] | null;
   excludeLicense?: string[] | null;
   includePackage?: string[] | null;
