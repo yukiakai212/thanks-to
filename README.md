@@ -1,4 +1,4 @@
-# 📦 thanks-to
+# thanks-to
 
 > Generate beautiful acknowledgments for your project's dependencies.  
 > Perfect for credits, open source disclosures, or "Thanks" sections.
@@ -10,7 +10,7 @@
 - ✅ Auto-detects `dependencies` and `devDependencies`
 - ✅ Distinguishes direct and transitive dependencies
 - ✅ Outputs to `./thanks-to/` folder by default
-- ✅ Supports JSON, Markdown, and HTML
+- ✅ Supports JSON, Markdown, CSV, and HTML
 - ✅ Customizable CLI: choose formats, include dev or transitive deps
 - ✅ Designed for humans – readable, copy-pasteable, docs-ready
 
@@ -45,13 +45,18 @@ npx thanks-to
 
 ### Options
 
-| Option             | Description                                      |
-|--------------------|--------------------------------------------------|
-| `--dev`            | Include `devDependencies`                        |
-| `--transitive`     | Include transitive (indirect) dependencies       |
-| `--report <types>` | Export formats: `json,md,html` (comma-separated) |
-| `--output <dir>`   | Custom output folder (default: `./thanks-to`)    |
-| `--silent`         | Suppress logs                                    |
+| Option                     | Description                                                   |
+| -------------------------- | ------------------------------------------------------------- |
+| `--transitive`             | Include transitive (indirect) dependencies                    |
+| `--report <types>`         | Export formats: `json,md,csv,html` (comma-separated)          |
+| `--output <dir>`           | Custom output folder (default: `./thanks-to`)                 |
+| `--silent`                 | Suppress logs                                                 |
+| `--only <group>`           | `deps`, `devDeps`, or `all` – choose which group to include   |
+| `--only-license <list>`    | Only include licenses in list (e.g. `mit,apache`)             |
+| `--exclude-license <list>` | Exclude licenses (e.g. `gpl,agpl`)                            |
+| `--include-package <list>` | Only include package names in list (e.g. `express,vue`)       |
+| `--exclude-package <list>` | Exclude package names (e.g. `left-pad,lodash`)                |
+| `--with-license-text`      |                                                               |
 
 ---
 
@@ -70,11 +75,49 @@ npx thanks-to --output ./docs/credits
 
 ---
 
+## 🧩 Programmatic Usage (API)
+
+You can also use `thanks-to` as a Node.js/TypeScript library:
+
+### Example
+
+```ts
+import { generateThanksData, exportReports } from 'thanks-to';
+
+async function main() {
+  const data = await generateThanksData({
+    dev: true,
+    transitive: false,
+  });
+
+  await exportReports(data, ['json', 'md'], './credits');
+}
+```
+
+### Types
+
+```ts
+export interface GenerateOptions {
+  dev?: boolean;
+  transitive?: boolean;
+}
+
+export function generateThanksData(options: GenerateOptions): Promise<GroupedDeps>;
+
+export function exportReports(
+  data: GroupedDeps,
+  formats: ('json' | 'md' | 'html')[],
+  outputDir: string
+): Promise<void>;
+```
+
+---
+
 ## 📁 Output
 
 ### Markdown (`credits.md`)
 
-\`\`\`md
+```md
 # 📦 Thanks to Open Source
 
 ## Dependencies (Direct)
@@ -82,7 +125,7 @@ npx thanks-to --output ./docs/credits
 
 ## Dev Dependencies (Direct)
 - [eslint](https://github.com/eslint/eslint) – MIT
-\`\`\`
+```
 
 ---
 
@@ -98,7 +141,7 @@ A clean, dark-mode-friendly HTML page you can embed in documentation or publish 
 
 Machine-readable output with structure:
 
-\`\`\`json
+```json
 {
   "dependencies": {
     "direct": [
@@ -106,7 +149,10 @@ Machine-readable output with structure:
         "name": "chalk",
         "version": "5.3.0",
         "license": "MIT",
-        "resolvedRepo": "https://github.com/chalk/chalk"
+        "repository": {
+		   "url": "https://www.npmjs.com/package/chalk",
+		   "git": "https://github.com/chalk/chalk"
+		}
       }
     ],
     "transitive": [...]
@@ -116,7 +162,7 @@ Machine-readable output with structure:
     "transitive": [...]
   }
 }
-\`\`\`
+```
 
 ---
 
@@ -131,6 +177,6 @@ Machine-readable output with structure:
 
 ## 📜 License
 
-MIT © [Yuki]
+MIT © [Yuki](https://github.com/yukiakai212/)
 
 ---

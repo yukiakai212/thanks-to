@@ -1,7 +1,7 @@
 {
   "name": "thanks-to",
   "version": "1.0.0",
-  "description": "Get __dirname and __filename in ESM & CJS using pure JavaScript",
+  "description": "Generate beautiful acknowledgments for your project's dependencies",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -19,13 +19,13 @@
     "dist/*"
   ],
   "keywords": [
-    "dirname",
-    "filename",
-    "path",
-    "cross"
+    "thank to",
+    "acknowledgments",
+    "license",
+    "source"
   ],
   "author": "Yuki_akai",
-  "homepage": "https://github.com/yukiakai212/vanipath",
+  "homepage": "https://github.com/yukiakai212/thanks-to",
   "engines": {
     "node": ">= 16"
   },
@@ -37,10 +37,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yukiakai212/vanipath.git"
+    "url": "git+https://github.com/yukiakai212/thanks-to.git"
   },
   "bugs": {
-    "url": "https://github.com/yukiakai212/vanipath/issues"
+    "url": "https://github.com/yukiakai212/thanks-to/issues"
   },
   "license": "MIT",
   "devDependencies": {
@@ -55,7 +55,10 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "glob": "^11.0.3",
+    "json-2-csv": "^5.5.9",
     "resolve-pkg": "^2.0.0",
+    "spdx-correct": "^3.2.0",
     "vanipath": "^1.0.5"
   }
 }

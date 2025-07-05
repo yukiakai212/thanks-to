@@ -33,4 +33,4 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: yukiakai212/vanipath
+          slug: yukiakai212/thanks-to

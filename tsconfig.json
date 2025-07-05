@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2016", 
-    "lib": ["es2016"]           
+    "module": "nodenext",     
+    "moduleResolution": "nodenext", 
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true        
   },
   "exclude": ["node_modules"]
 }

@@ -5,8 +5,8 @@ import path from 'path';
 import { GroupedDeps, PackageInfo } from './types';
 import { resolveSource } from './extractor';
 
-export function walkTree(npmTree, nameList): PackageInfo[] {
-  const tree = new Tree();
+export function walkTree(npmTree, nameList, options): PackageInfo[] {
+  const tree = new Tree(options);
   for (let node of nameList) {
     const parentNode = npmTree.dependencies[node];
     if (!parentNode.dependencies) continue;
@@ -19,14 +19,29 @@ export function walkTree(npmTree, nameList): PackageInfo[] {
 export class Tree {
   acc: Map<string, PackageInfo> = new Map();
   visited = new Set<string>();
+  options = null;
+  
+  constructor(options)
+  {
+	  this.options = options;
+  }
 
   walk(node, name, parentName) {
     if (!node || typeof node !== 'object' || !node.dependencies) return;
+	
     const key = `${name}@${node.version}`;
     if (this.visited.has(key)) return;
     this.visited.add(key);
+	if(this.options.includePackage && !this.options.includePackage.includes(name))
+		return;
+	if(this.options.excludePackage && this.options.excludePackage.includes(name))
+		return;
     if (!this.acc.has(key)) {
-      const pkg = resolveSource(name);
+      const pkg = resolveSource(name, this.options);
+	  if(this.options.onlyLicense && !this.options.onlyLicense.includes(pkg.license))
+		  return;
+	  if(this.options.excludeLicense && this.options.excludeLicense.includes(pkg.license))
+		  return;
       this.acc.set(key, {
         ...pkg,
         ...{
