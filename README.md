@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # vanipath
 
 [![NPM Version][npm-version-image]][npm-url]
@@ -89,3 +90,6 @@ MIT License © 2025 [yukiakai](https://github.com/yukiakai212)
 [github-url]: https://github.com/yukiakai212/vanipath/
 [codecov-image]: https://codecov.io/gh/yukiakai212/vanipath/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/yukiakai212/vanipath
+=======
+# thanks-to
+>>>>>>> b2f98cae52c7889bc88f4c37cae2c32d2fe89865
