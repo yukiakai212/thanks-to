@@ -1,95 +1,136 @@
-<<<<<<< HEAD
-# vanipath
+# 📦 thanks-to
 
-[![NPM Version][npm-version-image]][npm-url]
-[![NPM Downloads][npm-downloads-image]][npm-downloads-url]
-
-[![Build Status][github-build-url]][github-url]
-[![codecov][codecov-image]][codecov-url]
-
-> Drop-in replacement for `__filename` and `__dirname` in both ESM and CommonJS – pure JavaScript, no native bindings.
-
-**`vanipath`** provides functions that act as direct replacements for Node.js's `__filename` and `__dirname`, working seamlessly in **both ESM and CJS** environments. It's designed for who want compatibility across environments.
-No native modules, and no build steps required. Just import and use like the originals.
+> Generate beautiful acknowledgments for your project's dependencies.  
+> Perfect for credits, open source disclosures, or "Thanks" sections.
 
 ---
 
-## 🌐 Compatibility
+## ✨ Features
 
-| Runtime   | Support  | Notes                                   |
-|-----------|--------- |-----------------------------------------|
-| Node.js   | ✅       | Full support (ESM & CJS)                |
-| Deno      | ✅       | Full support (ESM & CJS)                |
-| Bun       | ✅       | Full support (ESM & CJS)                |
+- ✅ Auto-detects `dependencies` and `devDependencies`
+- ✅ Distinguishes direct and transitive dependencies
+- ✅ Outputs to `./thanks-to/` folder by default
+- ✅ Supports JSON, Markdown, and HTML
+- ✅ Customizable CLI: choose formats, include dev or transitive deps
+- ✅ Designed for humans – readable, copy-pasteable, docs-ready
 
 ---
 
-## 🚀 Installation
+## 🔧 Installation
 
 ```bash
-#nodejs
-npm install vanipath
-pnpm add vanipath
-#bun
-bun add vanipath
-#deno
-deno add npm:vanipath
+npm install --save-dev thanks-to
 ```
 
----
-
-
-## 🛠 Usage
-
-In ESM:
-
-```js
-import { filename, dirname } from 'vanipath';
-
-console.log(filename()); // equivalent to __filename
-console.log(dirname());  // equivalent to __dirname
-```
-
-In CommonJS:
-
-```js
-const { filename, dirname } = require('vanipath');
-
-console.log(filename()); // equivalent to __filename
-console.log(dirname());  // equivalent to __dirname
-```
-
-Works exactly like native `__filename` and `__dirname`, even in environments where they’re not available (like ESM modules).
-
----
-
-
-## 🧪 Test
-
-This project uses [Vitest](https://vitest.dev/):
+Or use directly without install:
 
 ```bash
-npm test
-# or
-npx vitest run
+npx thanks-to
 ```
 
 ---
 
-## 📄 License
+## 🚀 Usage
 
-MIT License © 2025 [yukiakai](https://github.com/yukiakai212)
+### Basic (default)
 
+```bash
+npx thanks-to
+```
 
+- Exports direct runtime dependencies
+- Generates 3 files: `credits.json`, `credits.md`, `credits.html` in `./thanks-to`
 
-[npm-downloads-image]: https://badgen.net/npm/dm/vanipath
-[npm-downloads-url]: https://www.npmjs.com/package/vanipath
-[npm-url]: https://www.npmjs.com/package/vanipath
-[npm-version-image]: https://badgen.net/npm/v/vanipath
-[github-build-url]: https://github.com/yukiakai212/vanipath/actions/workflows/build.yml/badge.svg
-[github-url]: https://github.com/yukiakai212/vanipath/
-[codecov-image]: https://codecov.io/gh/yukiakai212/vanipath/branch/main/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/yukiakai212/vanipath
-=======
-# thanks-to
->>>>>>> b2f98cae52c7889bc88f4c37cae2c32d2fe89865
+---
+
+### Options
+
+| Option             | Description                                      |
+|--------------------|--------------------------------------------------|
+| `--dev`            | Include `devDependencies`                        |
+| `--transitive`     | Include transitive (indirect) dependencies       |
+| `--report <types>` | Export formats: `json,md,html` (comma-separated) |
+| `--output <dir>`   | Custom output folder (default: `./thanks-to`)    |
+| `--silent`         | Suppress logs                                    |
+
+---
+
+### Examples
+
+```bash
+# Only export markdown
+npx thanks-to --report md
+
+# Include dev + transitive deps, only HTML
+npx thanks-to --dev --transitive --report html
+
+# Export into docs folder
+npx thanks-to --output ./docs/credits
+```
+
+---
+
+## 📁 Output
+
+### Markdown (`credits.md`)
+
+\`\`\`md
+# 📦 Thanks to Open Source
+
+## Dependencies (Direct)
+- [chalk](https://github.com/chalk/chalk) – MIT
+
+## Dev Dependencies (Direct)
+- [eslint](https://github.com/eslint/eslint) – MIT
+\`\`\`
+
+---
+
+### HTML (`credits.html`)
+
+A clean, dark-mode-friendly HTML page you can embed in documentation or publish on GitHub Pages.
+
+> Supports sectioning, clickable repo links, license info, and more.
+
+---
+
+### JSON (`credits.json`)
+
+Machine-readable output with structure:
+
+\`\`\`json
+{
+  "dependencies": {
+    "direct": [
+      {
+        "name": "chalk",
+        "version": "5.3.0",
+        "license": "MIT",
+        "resolvedRepo": "https://github.com/chalk/chalk"
+      }
+    ],
+    "transitive": [...]
+  },
+  "devDependencies": {
+    "direct": [...],
+    "transitive": [...]
+  }
+}
+\`\`\`
+
+---
+
+## 🧠 Why use this?
+
+- ❤️ Add credit to the open-source community
+- 📑 Show dependencies in published research or products
+- 📃 Required for compliance in some orgs
+- ✨ Just be a good human
+
+---
+
+## 📜 License
+
+MIT © [Yuki]
+
+---
