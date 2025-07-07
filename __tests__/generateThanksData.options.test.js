@@ -74,4 +74,8 @@ describe('generateThanksData (integration)', () => {
     const data = await generateThanksData({ withLicenseText: true });
     expect(data.dependencies.direct.find((x) => x.licenseContent)).toBeTruthy();
   });
+  it('should is undefined when project not monorepo type', async () => {
+    const data = await generateThanksData({ monoRepo: true });
+    expect(data).toBe(undefined);
+  });
 });

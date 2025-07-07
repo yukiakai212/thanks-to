@@ -72,12 +72,9 @@ export function resolveSource(packageName, options): PackageInfo | null {
       }
     : null;
 }
-export function getDirectDeps(packageFile: string | null): GroupedDeps | null {
-  const pkgPath = packageFile || path.resolve(process.cwd(), PACKAGE_FILE_NAME);
-  if (!fs.existsSync(pkgPath)) {
-    const nextSearchPkgPath = path.join(process.cwd(), '..', PACKAGE_FILE_NAME);
-    return nextSearchPkgPath !== pkgPath ? getDirectDeps(nextSearchPkgPath) : null;
-  }
+export function getDirectDeps(packageFile: string): GroupedDeps | null {
+  const pkgPath = path.resolve(path.join(packageFile, PACKAGE_FILE_NAME));
+  if (!fs.existsSync(pkgPath)) return null;
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   return {
     dependencies: pkg.dependencies ? Object.keys(pkg.dependencies) : [],
@@ -85,6 +82,24 @@ export function getDirectDeps(packageFile: string | null): GroupedDeps | null {
   };
 }
 
-export function getNpmTreeRaw() {
-  return execSync('npm ls --json --all', { encoding: 'utf8' });
+export function getNpmTreeRaw(dir: string) {
+  return execSync('npm ls --json --all', { cwd: dir, encoding: 'utf8' });
+}
+export function getWorkspacePackage(packageRoot: string): string[] {
+  const patterns = ['LICENSE*', 'LICENCE*', 'COPYING*'];
+
+  const files = globSync(
+    patterns.map((p) => path.posix.join(packageRoot, p)),
+    { nocase: true, absolute: true },
+  );
+  for (const file of files) {
+    try {
+      const content = fs.readFileSync(file, 'utf8');
+      return content;
+    } catch {
+      continue;
+    }
+  }
+
+  return undefined;
 }

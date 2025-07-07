@@ -2,14 +2,17 @@
 import { Command } from 'commander';
 import path from 'path';
 import fs from 'fs';
-import { generateThanksData, exportReports } from './dist/index.js';
+import ThanksTo from './dist/index.js';
 
 const program = new Command();
 
 program
   .name('thanks-to')
   .description('Generate credits for open-source dependencies')
-  .option('--only <group>', '[deps|devDeps|all] – choose which group to include', 'deps')
+  .option('--only <group>', '[deps|devDeps|all] – choose which group to include', 'all')
+  .option('--transitive', 'Include transitive (indirect) dependencies')
+  .option('--mono-repo', 'Scan all package.json in packages/** and apps/**')
+  .option('--dir <path>', 'Manually specify project folder to scan')
   .option('--transitive', 'Include transitive (indirect) dependencies')
   .option(
     '--report <formats>',
@@ -37,13 +40,14 @@ const formats = options.report.split(',').map((f) => f.trim().toLowerCase());
     console.log('📦 Generating thanks-to report...');
     console.log(`• Group: ${!!options.only}`);
     console.log(`• Include transitive deps: ${!!options.transitive}`);
+    console.log(`• Mono-repo: ${!!options.monoRepo}`);
+    console.log(`• Folder scan: ${options.dir || '.'}`);
     console.log(`• With license text: ${!!options.withLicenseText}`);
     console.log(`• Output formats: ${formats.join(', ')}`);
     console.log(`• Output directory: ${options.output}`);
   }
 
-  const data = await generateThanksData(options);
-  await exportReports(data, formats, options.output);
+  await ThanksTo(options, formats, options.output);
   if (!options.silent) {
     console.log(`✅ Exported reports to ${options.output}`);
   }

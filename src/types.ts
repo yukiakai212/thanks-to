@@ -21,7 +21,8 @@ export type GroupedDeps = {
   devDependencies: DependencyGroup;
 };
 export interface Options {
-  report: ('json' | 'md' | 'html' | 'csv')[];
+  dir: string;
+  monoRepo: boolean;
   transitive: boolean;
   withLicenseText: boolean;
   only: 'all' | 'deps' | 'devDeps';
@@ -29,5 +30,4 @@ export interface Options {
   excludeLicense?: string[] | null;
   includePackage?: string[] | null;
   excludePackage?: string[] | null;
-  output: string;
 }

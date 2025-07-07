@@ -1,19 +1,21 @@
+import path from 'node:path';
 import correct from 'spdx-correct';
+import _ from 'lodash';
+import { findUp } from '@yukiakai/find-up';
+import { globSync } from 'glob';
 import { GroupedDeps, Options } from './types.js';
-import { getDirectDeps, getNpmTreeRaw, resolveSourceList } from './extractor.js';
+import { getDirectDeps, getNpmTreeRaw, resolveSourceList, CACHE_PKG } from './extractor.js';
 import { walkTree } from './tree.js';
 import { exportReports } from './exporter.js';
 
 export { exportReports };
 function correctOptions(options): Options {
   const formatedOption: Options = {
-    report:
-      typeof options.report === 'string'
-        ? options.report.split(',')
-        : options.report || ['html', 'json', 'md', 'csv'],
+    dir: path.resolve(options.dir || '.'),
+    monoRepo: options.monoRepo || false,
     transitive: options?.transitive || false,
     withLicenseText: options?.withLicenseText || false,
-    only: options?.only || 'deps',
+    only: options?.only || 'all',
     onlyLicense:
       typeof options.onlyLicense === 'string'
         ? options.onlyLicense.split(',').map((x) => correct(x) || 'Unknow')
@@ -30,15 +32,16 @@ function correctOptions(options): Options {
       typeof options.excludePackage === 'string'
         ? options.excludePackage.split(',')
         : options.excludePackage,
-    output: options?.output || './thanks-to',
   };
   return formatedOption;
 }
 export const defaultOptions = correctOptions({});
-export function classifyDependencies(options?: Options): GroupedDeps {
-  const direct = getDirectDeps(null);
-  const npmTreeRaw = getNpmTreeRaw();
-  const npmTree = JSON.parse(npmTreeRaw);
+export function classifyDependencies(
+  options: Options,
+  workspace: string,
+  cache: boolean = true,
+): GroupedDeps {
+  if (!cache) CACHE_PKG.clear();
   const groups: GroupedDeps = {
     dependencies: {
       direct: [],
@@ -49,6 +52,10 @@ export function classifyDependencies(options?: Options): GroupedDeps {
       transitive: [],
     },
   };
+  const direct = getDirectDeps(workspace);
+  if (!direct) return groups;
+  const npmTreeRaw = getNpmTreeRaw(workspace);
+  const npmTree = JSON.parse(npmTreeRaw);
 
   if (['all', 'deps'].includes(options.only)) {
     groups.dependencies.direct = resolveSourceList(direct.dependencies, options);
@@ -65,12 +72,63 @@ export function classifyDependencies(options?: Options): GroupedDeps {
 
   return groups;
 }
-export async function thanksTo(options): Promise<void> {
-  const thanksData = await generateThanksData(options);
-  await exportReports(thanksData, options.report, options.output);
+export function classifyDependenciesMonoRepo(
+  options: Options,
+  workspace: string,
+  cache: boolean = true,
+): GroupedDeps {
+  const patterns = ['apps/**', 'packages/**'];
+  let thanksAll: GroupedDeps;
+  console.log(thanksAll);
+  const apps = globSync(
+    patterns.map((p) => path.posix.join(workspace, p)),
+    { nocase: true, absolute: true },
+  );
+  for (const app of apps) {
+    try {
+      const thanks: GroupedDeps = classifyDependencies(options, app, cache);
+      if (!thanksAll) {
+        thanksAll = thanks;
+        continue;
+      }
+      thanksAll.dependencies.direct = _.unionBy(
+        thanksAll.dependencies.direct,
+        thanks.dependencies.direct,
+        'name',
+      );
+      thanksAll.dependencies.transitive = _.unionBy(
+        thanksAll.dependencies.transitive,
+        thanks.dependencies.transitive,
+        'name',
+      );
+      thanksAll.devDependencies.direct = _.unionBy(
+        thanksAll.devDependencies.direct,
+        thanks.devDependencies.direct,
+        'name',
+      );
+      thanksAll.devDependencies.transitive = _.unionBy(
+        thanksAll.devDependencies.transitive,
+        thanks.devDependencies.transitive,
+        'name',
+      );
+    } catch {
+      continue;
+    }
+  }
+  return thanksAll;
 }
-export async function generateThanksData(options): Promise<GroupedDeps> {
+export default async function thanksTo(options, report, output): Promise<void> {
+  const thanksData = await generateThanksData(options);
+  await exportReports(thanksData, report, output);
+}
+export async function generateThanksData(
+  options?: object,
+  cache: boolean = true,
+): Promise<GroupedDeps | undefined> {
   const optsCorrected = correctOptions(options);
-  const result = classifyDependencies(optsCorrected);
-  return result;
+  const workspace = findUp('package.json', { basedir: optsCorrected.dir });
+  const thanks = optsCorrected.monoRepo
+    ? classifyDependenciesMonoRepo(optsCorrected, workspace, cache)
+    : classifyDependencies(optsCorrected, workspace, cache);
+  return thanks;
 }

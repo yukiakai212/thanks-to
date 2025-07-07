@@ -18,6 +18,7 @@
 - ✅ Export to Markdown, JSON, CSV, and HTML
 - ✅ Filter by license name or package
 - ✅ Optional: Include full license content per package
+- ✅ **Monorepo support** – auto-scan `packages/*`, `apps/*` with `--mono-repo`
 - ✅ Works via CLI or programmatic API
 
 ---
@@ -47,11 +48,13 @@ npx thanks-to [options]
 | Option                     | Description                                                   | Default          |
 | -------------------------- | ------------------------------------------------------------- |----------------- |
 | `--help`                   | Show usage instructions and available options                 | -                |
+| `--mono-repo`              | Scan all `package.json` in `packages/**` and `apps/**`        | false            |
+| `--dir <path>`             | Manually specify project folder to scan                       | `.`              |
 | `--transitive`             | Include transitive (indirect) dependencies                    | false            |
 | `--report <types>`         | Export formats: `json,md,csv,html` (comma-separated)          | json,md,csv,html |
 | `--output <dir>`           | Custom output folder                                          | `./thanks-to`    |  
 | `--silent`                 | Suppress logs                                                 | false            |
-| `--only <group>`           | `deps`, `devDeps`, or `all` – choose which group to include   | deps             |
+| `--only <group>`           | `deps`, `devDeps`, or `all` – choose which group to include   | all              |
 | `--only-license <list>`    | Only include licenses in list (e.g. `mit,apache`)             | -                |
 | `--exclude-license <list>` | Exclude licenses (e.g. `gpl,agpl`)                            | -                |
 | `--include-package <list>` | Only include package names in list (e.g. `express,vue`)       | -                |
@@ -89,6 +92,12 @@ npx thanks-to --with-license-text --report html
 
 # Export into docs folder
 npx thanks-to --output ./docs/credits
+
+# Scan all packages in monorepo (packages/* and apps/*)
+npx thanks-to --mono-repo
+
+# Manually scan a single project
+npx thanks-to --dir ./packages/docs --report md
 ```
 
 ---
@@ -125,7 +134,8 @@ If you're using TypeScript, the library automatically infers types from exported
 
 ```ts
 Options {
-  report: string['html' | 'csv' | 'json' | 'md'];
+  dir: string;
+  monoRepo: boolean;
   transitive: boolean;
   withLicenseText: boolean;
   only: 'all' | 'deps' | 'devDeps';
@@ -133,38 +143,14 @@ Options {
   excludeLicense?: string[] | null;
   includePackage?: string[] | null;
   excludePackage?: string[] | null;
-  output: string;
 }
 ```
-
-You can pass these options into `generateThanksData()` or into a wrapper function if building a programmatic tool. The `report` option is typically used with `exportReports()` to control the file formats written.
 
 ---
 
 ## 📁 Output Formats
 
-### ✅ Markdown (`credits.md`)
-
-```md
-# 📦 Thanks to Open Source
-
-## Dependencies (Direct)
-- [express](https://github.com/expressjs/express) – MIT
-
-## DevDependencies (Direct)
-- [eslint](https://github.com/eslint/eslint) – MIT
-```
-
-### ✅ CSV (`credits.csv`)
-
-```csv
-name,version,license,repository.url,via,type
-chalk,5.3.0,MIT,https://github.com/chalk/chalk,,dependencies
-eslint,8.56.0,MIT,https://github.com/eslint/eslint,,devDependencies
-```
-
-### ✅ JSON (`credits.json`)
-
+### ✅ JSON
 Structured data grouped by type (`direct`, `transitive`):
 
 ```json
@@ -175,9 +161,11 @@ Structured data grouped by type (`direct`, `transitive`):
         "name": "express",
         "version": "4.18.2",
         "license": "MIT",
+		"author": "...",
+		"description": "..."
         "repository": {
-		   "url": "https://www.npmjs.com/package/chalk",
-		   "git": "https://github.com/chalk/chalk"
+		   "url": "https://www.npmjs.com/package/express",
+		   "git": "https://github.com/express/express"
 		}
         "licenseContent": "..." // if --with-license-text used
       }
@@ -185,10 +173,6 @@ Structured data grouped by type (`direct`, `transitive`):
   }
 }
 ```
-
-### ✅ HTML (`credits.html`)
-
-Clean, dark-mode friendly HTML with links, license names and full license content (optional).
 
 ---
 
@@ -198,6 +182,12 @@ Clean, dark-mode friendly HTML with links, license names and full license conten
 - 📑 Show dependencies in published research or products
 - 📃 Required for compliance in some orgs
 - ✨ Just be a good human
+
+---
+
+## 📦 Changelog
+
+See full release notes in [CHANGELOG.md][changelog-url]
 
 ---
 
@@ -216,3 +206,4 @@ MIT © [Yuki](https://github.com/yukiakai212/)
 [github-url]: https://github.com/yukiakai212/thanks-to/
 [codecov-image]: https://codecov.io/gh/yukiakai212/thanks-to/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/yukiakai212/thanks-to
+[changelog-url]: https://github.com/yukiakai212/thanks-to/CHANGELOG.md
