@@ -206,4 +206,4 @@ MIT © [Yuki](https://github.com/yukiakai212/)
 [github-url]: https://github.com/yukiakai212/thanks-to/
 [codecov-image]: https://codecov.io/gh/yukiakai212/thanks-to/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/yukiakai212/thanks-to
-[changelog-url]: https://github.com/yukiakai212/thanks-to/CHANGELOG.md
+[changelog-url]: https://github.com/yukiakai212/thanks-to/blob/main/CHANGELOG.md
