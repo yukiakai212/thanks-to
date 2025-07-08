@@ -19,7 +19,8 @@
   },
   "files": [
     "dist/*",
-    "cli.js"
+    "cli.js",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "thanks to",
