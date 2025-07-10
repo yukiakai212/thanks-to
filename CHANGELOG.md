@@ -1,5 +1,11 @@
 # thanks-to
 
+## 1.1.2
+
+### Patch Changes
+
+- 6d2cc80: fix duplicate command error
+
 ## 1.1.1
 
 ### Patch Changes
