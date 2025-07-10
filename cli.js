@@ -10,7 +10,6 @@ program
   .name('thanks-to')
   .description('Generate credits for open-source dependencies')
   .option('--only <group>', '[deps|devDeps|all] – choose which group to include', 'all')
-  .option('--transitive', 'Include transitive (indirect) dependencies')
   .option('--mono-repo', 'Scan all package.json in packages/** and apps/**')
   .option('--dir <path>', 'Manually specify project folder to scan')
   .option('--transitive', 'Include transitive (indirect) dependencies')
