@@ -3,8 +3,12 @@
 ## 1.1.2
 
 ### Patch Changes
+ 
+#### 🐛 Bug Fixes
 
-- 6d2cc80: fix duplicate command error
+- Fixed duplicate command error
+
+---
 
 ## 1.1.1
 
