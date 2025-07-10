@@ -4,8 +4,12 @@
 
 ### Patch Changes
 
-- 2ff1974: - Missing dependencies
-  - Update dependencies to latest version to fix false positive when searching for root project
+#### 🐛 Bug Fixes
+
+- Missing dependencies
+- Update dependencies to latest version to fix false positive when searching for root project
+
+---
 
 ## 1.1.0
 
