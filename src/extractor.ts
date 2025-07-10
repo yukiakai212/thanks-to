@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import correct from 'spdx-correct';
-import resolvePkg from 'resolve-pkg';
+import { resolvePath } from '@yukiakai/resolve-package';
 import { globSync } from 'glob';
 
 import { GroupedDeps, PackageInfo } from './types.js';
@@ -44,7 +44,7 @@ export function resolveSource(packageName, options): PackageInfo | null {
   const getPkg = (name, options) => {
     const cachePkg = CACHE_PKG.get(name);
     if (cachePkg) return cachePkg;
-    const modulePath = resolvePkg(name);
+    const modulePath = resolvePath(name);
     if (!modulePath) return console.warn('Cant found module:', name);
     const pkg = JSON.parse(fs.readFileSync(path.join(modulePath, PACKAGE_FILE_NAME), 'utf8'));
     pkg.licenseContent = options.withLicenseText ? readLicenseFile(modulePath) : null;
@@ -58,7 +58,7 @@ export function resolveSource(packageName, options): PackageInfo | null {
         name: pkg.name,
         version: pkg.version,
         author: pkg.author,
-        license: correct(pkg?.license) || 'Unknow',
+        license: pkg.license ? correct(pkg.license) : 'Unknow',
         licenseContent: pkg?.licenseContent,
         description: pkg?.description,
         repository: {

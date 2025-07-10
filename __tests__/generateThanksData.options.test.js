@@ -57,6 +57,7 @@ describe('generateThanksData (integration)', () => {
       ...data.devDependencies.direct,
       ...data.devDependencies.transitive,
     ].map((x) => x.name);
+    console.log(JSON.stringify(names));
     expect(names.every((n) => n === 'glob')).toBe(true);
   });
 
