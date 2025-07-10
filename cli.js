@@ -37,7 +37,7 @@ const formats = options.report.split(',').map((f) => f.trim().toLowerCase());
 (async () => {
   if (!options.silent) {
     console.log('📦 Generating thanks-to report...');
-    console.log(`• Group: ${!!options.only}`);
+    console.log(`• Group: ${options.only}`);
     console.log(`• Include transitive deps: ${!!options.transitive}`);
     console.log(`• Mono-repo: ${!!options.monoRepo}`);
     console.log(`• Folder scan: ${options.dir || '.'}`);
