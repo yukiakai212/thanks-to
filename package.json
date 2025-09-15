@@ -63,7 +63,7 @@
   "dependencies": {
     "@yukiakai/find-up": "^1.0.0",
     "@yukiakai/resolve-package": "^1.0.2",
-    "commander": "^14.0.0",
+    "commander": "^14.0.1",
     "glob": "^11.0.3",
     "json-2-csv": "^5.5.9",
     "lodash": "^4.17.21",
