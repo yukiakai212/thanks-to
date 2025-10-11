@@ -13,6 +13,4 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-    assignees:
-      - "yukiakai212" #
 
