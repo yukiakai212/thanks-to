@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@yukiakai/find-up": "^1.0.0",
-    "@yukiakai/resolve-package": "^1.0.2",
+    "@yukiakai/resolve-package": "^1.1.1",
     "commander": "^14.0.0",
     "glob": "^13.0.0",
     "json-2-csv": "^5.5.9",
