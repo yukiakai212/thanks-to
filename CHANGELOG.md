@@ -1,5 +1,11 @@
 # thanks-to
 
+## 1.1.5
+
+### Patch Changes
+
+- 40481bd: Using Trusted Publisher
+
 ## 1.1.3
 
 ### Patch Changes
