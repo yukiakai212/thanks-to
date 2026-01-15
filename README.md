@@ -178,10 +178,10 @@ Structured data grouped by type (`direct`, `transitive`):
 
 ## Use case
 
-- ❤️ Add credit to the open-source community
-- 📑 Show dependencies in published research or products
-- 📃 Required for compliance in some orgs
-- ✨ Just be a good human
+- Add credit to the open-source community
+- Show dependencies in published research or products
+- Required for compliance in some orgs
+- Just be a good human
 
 ---
 
