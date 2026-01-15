@@ -1,9 +1,15 @@
 # thanks-to
 
+## 1.1.3
+
+### Patch Changes
+
+- 5f10993: Security patch release
+
 ## 1.1.2
 
 ### Patch Changes
- 
+
 #### 🐛 Bug Fixes
 
 - Fixed duplicate command error
