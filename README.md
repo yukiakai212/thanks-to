@@ -1,4 +1,4 @@
-# 📦 thanks-to
+# thanks-to
 
 [![NPM Version][npm-version-image]][npm-url]
 [![NPM Downloads][npm-downloads-image]][npm-downloads-url]
@@ -11,7 +11,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - ✅ Auto-detect `dependencies` and `devDependencies`
 - ✅ Separate `direct` and `transitive` dependencies
@@ -23,7 +23,7 @@
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install --save-dev thanks-to
@@ -37,7 +37,7 @@ npx thanks-to
 
 ---
 
-## 🚀 CLI Usage
+## CLI Usage
 
 ```bash
 npx thanks-to [options]
@@ -102,11 +102,11 @@ npx thanks-to --dir ./packages/docs --report md
 
 ---
 
-## 🧩 API Usage
+## API Usage
 
 You can use `thanks-to` in both ESM and CommonJS environments.
 
-### ✅ ESM
+### ESM
 
 ```ts
 import { generateThanksData, exportReports } from 'thanks-to';
@@ -115,7 +115,7 @@ const data = await generateThanksData({ transitive: true });
 await exportReports(data, ['md'], './output');
 ```
 
-### ✅ CommonJS
+### CommonJS
 
 ```js
 const { generateThanksData, exportReports } = require('thanks-to');
@@ -148,9 +148,9 @@ Options {
 
 ---
 
-## 📁 Output Formats
+## Output Formats
 
-### ✅ JSON
+### JSON
 Structured data grouped by type (`direct`, `transitive`):
 
 ```json
@@ -176,7 +176,7 @@ Structured data grouped by type (`direct`, `transitive`):
 
 ---
 
-## 🧠 Use case
+## Use case
 
 - ❤️ Add credit to the open-source community
 - 📑 Show dependencies in published research or products
@@ -185,13 +185,13 @@ Structured data grouped by type (`direct`, `transitive`):
 
 ---
 
-## 📦 Changelog
+## Changelog
 
 See full release notes in [CHANGELOG.md][changelog-url]
 
 ---
 
-## 📜 License
+## License
 
 MIT © [Yuki](https://github.com/yukiakai212/)
 
